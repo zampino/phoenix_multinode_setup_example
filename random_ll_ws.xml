@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE tsung SYSTEM "~/dev/tsung/tsung-1.0.dtd">
+<tsung loglevel="debug">
+
+  <clients>
+    <client host="localhost" cpu="2" maxusers="100000"/>
+    <client host="localhost" cpu="2" maxusers="100000"/>
+    <client host="localhost" cpu="2" maxusers="100000"/>
+  </clients>
+
+  <servers>
+    <server host="localhost" port="4000" type="tcp"/>
+  </servers>
+
+  <load>
+    <arrivalphase phase="1" duration="20" unit="second">
+      <users arrivalrate="100" unit="second"/>
+    </arrivalphase>
+  </load>
+
+  <sessions>
+    <session name="websocket" probability="100" type="ts_websocket">
+      <request>
+        <websocket type="connect" path="/socket/websocket"></websocket>
+      </request>
+
+      <request subst="true">
+        <websocket type="message">{"topic":"device:connect", "event":"phx_join", "payload": {"user":"%%ts_user_server:get_unique_id%%"}, "ref":"1"}</websocket>
+      </request>
+
+      <for var="i" from="1" to="50" incr="1">
+        <thinktime value="1"/>
+        <request subst="true">
+          <websocket type="message">{"topic":"device:connect", "event":"coord", "payload": {"lat":"%%random_ll:r_lat%%", "long":"%%random_ll:r_long%%"}, "ref":"1"}</websocket>
+        </request>
+      </for>
+
+    </session>
+  </sessions>
+</tsung>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE tsung SYSTEM "~/dev/tsung/tsung-1.0.dtd">
+<tsung loglevel="debug">
+
+  <clients>
+    <client host="localhost" cpu="2" maxusers="100000"/>
+    <client host="localhost" cpu="2" maxusers="100000"/>
+    <client host="localhost" cpu="2" maxusers="100000"/>
+    <client host="localhost" cpu="2" maxusers="100000"/>
+  </clients>
+
+  <servers>
+    <server host="localhost" port="4000" type="tcp"/>
+  </servers>
+
+  <load>
+    <arrivalphase phase="1" duration="60" unit="second">
+      <users arrivalrate="500" unit="second"/>
+    </arrivalphase>
+  </load>
+
+  <sessions>
+    <session name="random_ll" probability="100" type="ts_http">
+      <request subst="true">
+        <http url="/api/v1/geos"
+              method="POST"
+              content_type="application/json"
+              contents="{&quot;geo&quot;:{&quot;lat&quot;:&quot;%%random_ll:r_lat%%&quot;, &quot;long&quot;:&quot;%%random_ll:r_long%%&quot;}}" />
+      </request>
+    </session>
+  </sessions>
+</tsung>
